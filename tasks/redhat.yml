@@ -1,0 +1,67 @@
+---
+
+- name: '{{ ansible_distribution }} - Telegraf: Verify if {{ base_telegraf_config_extradir }}'
+  stat:
+    path: "{{ base_telegraf_config_extradir }}"
+  register: telegraf_config_extradir
+
+
+- debug:
+    msg: "{{ base_telegraf_config_extradir }} directory exists"
+  when: telegraf_config_extradir.stat.exists
+
+
+- name: '{{ ansible_distribution }} - Telegraf: Verify if {{ base_telegraf_dir_metrics }}'
+  stat:
+    path: "{{ base_telegraf_dir_metrics }}"
+  register: telegraf_dir_metrics
+
+
+- debug:
+    msg: "{{ base_telegraf_dir_metrics }} directory exists"
+  when: telegraf_dir_metrics.stat.exists
+
+
+- name: '{{ ansible_distribution }} - Telegraf: Verify if {{ base_telegraf_dir_logs }}'
+  stat:
+    path: "{{ base_telegraf_dir_logs }}"
+  register: telegraf_dir_logs
+
+
+- debug:
+    msg: "{{ base_telegraf_dir_logs }} directory exists"
+  when: telegraf_dir_logs.stat.exists
+
+
+- name: '{{ ansible_distribution }} - Telegraf: Verify if {{ base_telegraf_dir_base }}'
+  stat:
+    path: "{{ base_telegraf_dir_base }}"
+  register: telegraf_dir_base
+
+
+- debug:
+    msg: "{{ base_telegraf_dir_base }} directory exists"
+  when: telegraf_dir_base.stat.exists
+
+- name: '{{ ansible_distribution }} - NODOCKER - Telegraf: Copy input docker.conf file'
+  template:
+    src: 'docker.conf.j2'
+    dest: "{{ base_telegraf_config_extradir }}/docker.conf"
+    owner: "{{ base_telegraf_user }}"
+    group: "{{ base_telegraf_group }}"
+  when: telegraf_config_extradir.stat.exists and ansible_virtualization_type != "docker"
+  become: true
+  notify: base_telegraf_restart_no_container
+
+
+- name: '{{ ansible_distribution }} - DOCKER - Telegraf: Copy input docker.conf file'
+  template:
+    src: 'docker.conf.j2'
+    dest: "{{ base_telegraf_config_extradir }}/docker.conf"
+    owner: "{{ base_telegraf_user }}"
+    group: "{{ base_telegraf_group }}"
+  when: telegraf_config_extradir.stat.exists and ansible_virtualization_type == "docker"
+  become: true
+  notify: base_telegraf_restart_in_container
+
+

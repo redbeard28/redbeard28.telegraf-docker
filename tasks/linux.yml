@@ -1,0 +1,11 @@
+# ***********************************************
+#  Linux installation (Centos / Redhat / Debian Only)
+# ************************************************
+---
+
+- include: redhat.yml
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+# https://access.redhat.com/solutions/3356681
+
+# - include: debian.yml
+#   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'

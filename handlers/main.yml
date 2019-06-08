@@ -1,0 +1,15 @@
+---
+
+- name: 'base_telegraf_restart_no_container'
+  systemd:
+    name: "{{ base_telegraf_service_name }}"
+    state: restarted
+    daemon_reload: true
+  become: true
+
+
+- name: "base_telegraf_restart_in_container"
+  service:
+    name: "{{ base_telegraf_service_name }}"
+    state: restarted
+  become: true
